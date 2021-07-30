@@ -6,7 +6,7 @@
  * @since 0.1.0
  */
 
-namespace HRSWP\GitHubUpdater\lib\load;
+namespace HRS\HrswpGitHubUpdater\lib\load;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );

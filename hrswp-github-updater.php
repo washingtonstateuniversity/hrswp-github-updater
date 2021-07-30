@@ -16,7 +16,7 @@
  * @since 0.1.0
  */
 
-namespace HrswpGitHubUpdater;
+namespace HRS\HrswpGitHubUpdater;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
