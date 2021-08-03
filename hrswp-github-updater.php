@@ -100,7 +100,9 @@ function activate() {
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
-	require dirname( __FILE__ ) . '/lib/options.php';
+	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
+		require dirname( __FILE__ ) . '/lib/options.php';
+	}
 
 	options\update_plugin_option( array( 'status' => 'activated' ) );
 }
@@ -114,7 +116,9 @@ function deactivate() {
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
-	require dirname( __FILE__ ) . '/lib/options.php';
+	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
+		require dirname( __FILE__ ) . '/lib/options.php';
+	}
 
 	options\update_plugin_option( array( 'status' => 'inactive' ) );
 }
@@ -128,7 +132,9 @@ function uninstall() {
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
-	require dirname( __FILE__ ) . '/lib/options.php';
+	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
+		require dirname( __FILE__ ) . '/lib/options.php';
+	}
 
 	options\delete_plugin_option();
 }
