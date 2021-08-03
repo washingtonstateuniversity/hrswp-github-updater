@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Load lib files.
  */
-
+require dirname( __FILE__ ) . '/options.php';
 
 /**
  * Load inc files.
