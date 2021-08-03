@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // Starts things up.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\pre_init');
+add_action( 'plugins_loaded', __NAMESPACE__ . '\pre_init' );
 
 /* Register lifecycle methods. */
 register_activation_hook( __FILE__, __NAMESPACE__ . '\activate' );
@@ -102,7 +102,7 @@ function activate() {
 	}
 	require dirname( __FILE__ ) . '/lib/options.php';
 
-	options\update_plugin_option( array( 'status' => 'activated') );
+	options\update_plugin_option( array( 'status' => 'activated' ) );
 }
 
 /**

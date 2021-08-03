@@ -2,7 +2,7 @@
 /**
  * Manage plugin options.
  *
- * @package
+ * @package HRSWP_GitHub_Updater
  * @since 0.1.0
  */
 
@@ -50,6 +50,7 @@ function update_plugin_option( $option = array() ) {
  *
  * @since 0.1.0
  *
+ * @param string $option_name The key value of a plugin option value to delete.
  * @return bool True if the option was deleted, false otherwise.
  */
 function delete_plugin_option( $option_name = '' ) {
@@ -58,9 +59,9 @@ function delete_plugin_option( $option_name = '' ) {
 		return delete_option( hrswp\plugin_meta( 'option_name' ) );
 	}
 
-    // If supplied an option name, remove that value.
-    $plugin_option = get_option( hrswp\plugin_meta( 'option_name' ) );
-    unset( $plugin_option[ $option_name ] );
+	// If supplied an option name, remove that value.
+	$plugin_option = get_option( hrswp\plugin_meta( 'option_name' ) );
+	unset( $plugin_option[ $option_name ] );
 
-    return update_option( hrswp\plugin_meta( 'option_name' ), $plugin_option );
+	return update_option( hrswp\plugin_meta( 'option_name' ), $plugin_option );
 }
