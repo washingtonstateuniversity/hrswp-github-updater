@@ -34,7 +34,7 @@ function update_plugin_option( $option = array() ) {
 		return add_option(
 			hrswp\plugin_meta( 'option_name' ),
 			array(
-				'status'  => 'activated',
+				'status'  => 'active',
 				'version' => '0.0.0',
 			)
 		);

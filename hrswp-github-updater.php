@@ -105,7 +105,7 @@ function activate() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
-	options\update_plugin_option( array( 'status' => 'activated' ) );
+	options\update_plugin_option( array( 'status' => 'active' ) );
 }
 
 /**
