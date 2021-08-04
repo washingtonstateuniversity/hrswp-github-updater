@@ -18,13 +18,20 @@
 
 namespace HRS\HrswpGitHubUpdater;
 
+use HRS\HrswpGitHubUpdater\lib\options;
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
 // Starts things up.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\pre_init');
+add_action( 'plugins_loaded', __NAMESPACE__ . '\pre_init' );
+
+/* Register lifecycle methods. */
+register_activation_hook( __FILE__, __NAMESPACE__ . '\activate' );
+register_deactivation_hook( __FILE__, __NAMESPACE__ . '\deactivate' );
+register_uninstall_hook( __FILE__, __NAMESPACE__ . '\uninstall' );
 
 /**
  * Displays a version notice.
@@ -58,5 +65,77 @@ function pre_init() {
 		return;
 	}
 
+	/* Load required plugin files. */
 	require dirname( __FILE__ ) . '/lib/load.php';
+}
+
+/**
+ * Manages plugin metadata for ease of access.
+ *
+ * @since 0.1.0
+ *
+ * @param string $meta Optional. A specific plugin metadata key to return.
+ * @return string|array The requested metadata value or an array of all plugin metadata.
+ */
+function plugin_meta( $meta = '' ) {
+	$plugin_meta = array(
+		'path'           => __FILE__,
+		'slug'           => 'hrswp-github-updater',
+		'option_name'    => 'hrswp_github_updater_status',
+		'transient_name' => 'hrswp_github_updater_timeout',
+	);
+
+	if ( '' !== $meta ) {
+		return $plugin_meta[ (string) $meta ];
+	}
+
+	return $plugin_meta;
+}
+
+/**
+ * Activates the plugin.
+ *
+ * @since 0.1.0
+ */
+function activate() {
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
+		require dirname( __FILE__ ) . '/lib/options.php';
+	}
+
+	options\update_plugin_option( array( 'status' => 'active' ) );
+}
+
+/**
+ * Deactivates the plugin.
+ *
+ * @since 0.1.0
+ */
+function deactivate() {
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
+		require dirname( __FILE__ ) . '/lib/options.php';
+	}
+
+	options\update_plugin_option( array( 'status' => 'inactive' ) );
+}
+
+/**
+ * Uninstalls the plugin.
+ *
+ * @since 0.1.0
+ */
+function uninstall() {
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
+		require dirname( __FILE__ ) . '/lib/options.php';
+	}
+
+	options\delete_plugin_option();
 }
