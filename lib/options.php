@@ -65,3 +65,23 @@ function delete_plugin_option( $option_name = '' ) {
 
 	return update_option( hrswp\plugin_meta( 'option_name' ), $plugin_option );
 }
+
+/**
+ * Updates the plugin status and version number as needed.
+ *
+ * @since 0.1.0
+ */
+function update_plugin_meta() {
+	// Exit early if transient still exists or missing data function.
+	if ( false !== get_transient( hrswp\plugin_meta( 'transient_name' ) ) || ! function_exists( 'get_plugin_data' ) ) {
+		return;
+	}
+
+	// Update the plugin version number.
+	$plugin_data = get_plugin_data( hrswp\plugin_meta( 'path' ) );
+	update_plugin_option( array( 'version' => $plugin_data['Version'] ) );
+
+	// Set the updater timeout transient to prevent checking for 12 hours.
+	set_transient( hrswp\plugin_meta( 'transient_name' ), '1', 12 * HOUR_IN_SECONDS );
+}
+add_action( 'admin_init', __NAMESPACE__ . '\update_plugin_meta' );

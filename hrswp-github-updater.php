@@ -79,9 +79,10 @@ function pre_init() {
  */
 function plugin_meta( $meta = '' ) {
 	$plugin_meta = array(
-		'path'        => __FILE__,
-		'slug'        => 'hrswp-github-updater',
-		'option_name' => 'hrswp_github_updater_status',
+		'path'           => __FILE__,
+		'slug'           => 'hrswp-github-updater',
+		'option_name'    => 'hrswp_github_updater_status',
+		'transient_name' => 'hrswp_github_updater_timeout',
 	);
 
 	if ( '' !== $meta ) {
