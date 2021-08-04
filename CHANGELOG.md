@@ -18,4 +18,4 @@ Changelog formatting (http://semver.org/):
 
 -->
 
-## 0.1.0 (:construction: Future)
+## 0.1.0-rc.1 (:construction: Future)
