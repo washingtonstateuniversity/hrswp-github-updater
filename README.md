@@ -8,7 +8,7 @@ The HRSWP GitHub Updater plugin helps to manage updates for GitHub-hosted plugin
 
 ## Description
 
-
+:construction: This plugin is under construction and does not yet do anything. :construction:
 
 ## Installation
 
