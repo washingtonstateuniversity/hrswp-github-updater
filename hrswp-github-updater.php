@@ -66,7 +66,7 @@ function pre_init() {
 	}
 
 	/* Load required plugin files. */
-	require dirname( __FILE__ ) . '/lib/load.php';
+	require dirname( __FILE__ ) . '/inc/load.php';
 }
 
 /**

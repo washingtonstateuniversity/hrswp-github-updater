@@ -6,7 +6,7 @@
  * @since 0.1.0
  */
 
-namespace HRS\HrswpGitHubUpdater\lib\load;
+namespace HRS\HrswpGitHubUpdater\inc\load;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );
@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Load lib files.
  */
-require_once __DIR__ . '/api.php';
-require_once __DIR__ . '/options.php';
+require_once dirname( __DIR__ ) . '/lib/api.php';
+require_once dirname( __DIR__ ) . '/lib/options.php';
 
 /**
  * Load admin files.
