@@ -82,7 +82,7 @@ function plugin_meta( $meta = '' ) {
 		'path'           => __FILE__,
 		'slug'           => 'hrswp-github-updater',
 		'option_name'    => 'hrswp_github_updater_status',
-		'transient_name' => 'hrswp_github_updater_timeout',
+		'transient_base' => 'hrswp_gu',
 	);
 
 	if ( '' !== $meta ) {
