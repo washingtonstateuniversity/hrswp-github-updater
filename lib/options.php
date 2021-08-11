@@ -67,6 +67,24 @@ function delete_plugin_option( $option_name = '' ) {
 }
 
 /**
+ * Retrieves a single plugin option or all of the options.
+ *
+ * @since 0.2.0
+ *
+ * @param string $option_name The name of the plugin option to retrieve.
+ * @return mixed The value of the requested plugin option or an array of all options.
+ */
+function get_plugin_option( $option_name = '' ) {
+	$plugin_option = get_option( hrswp\plugin_meta( 'option_name' ) );
+
+	if ( ! $option_name ) {
+		return $plugin_option;
+	}
+
+	return $plugin_option[ $option_name ];
+}
+
+/**
  * Updates the plugin status and version number as needed.
  *
  * @since 0.1.0
