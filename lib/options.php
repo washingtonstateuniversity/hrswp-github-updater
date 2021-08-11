@@ -71,9 +71,10 @@ function delete_plugin_option( $option_name = '' ) {
  *
  * @since 0.1.0
  */
-function update_plugin_meta() {
+function update_plugin_version() {
 	// Exit early if transient still exists or missing data function.
-	if ( false !== get_transient( hrswp\plugin_meta( 'transient_name' ) ) || ! function_exists( 'get_plugin_data' ) ) {
+	$transient_name = hrswp\plugin_meta( 'transient_base' ) . '_timeout';
+	if ( false !== get_transient( $transient_name ) || ! function_exists( 'get_plugin_data' ) ) {
 		return;
 	}
 
@@ -82,6 +83,6 @@ function update_plugin_meta() {
 	update_plugin_option( array( 'version' => $plugin_data['Version'] ) );
 
 	// Set the updater timeout transient to prevent checking for 12 hours.
-	set_transient( hrswp\plugin_meta( 'transient_name' ), '1', 12 * HOUR_IN_SECONDS );
+	set_transient( $transient_name, '1', 12 * HOUR_IN_SECONDS );
 }
-add_action( 'admin_init', __NAMESPACE__ . '\update_plugin_meta' );
+add_action( 'admin_init', __NAMESPACE__ . '\update_plugin_version' );
