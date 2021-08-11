@@ -6,7 +6,7 @@
  * Author: Adam Turner, washingtonstateuniversity
  * Author URI: https://hrs.wsu.edu/
  * Plugin URI: https://github.com/washingtonstateuniversity/hrswp-github-updater
- * Update URI: https://github.com/washingtonstateuniversity/hrswp-github-updater/releases/latest
+ * Update URI: https://api.github.com/washingtonstateuniversity/hrswp-github-updater/releases/latest
  * Text Domain: hrswp-github-updater
  * Requires at least: 5.8
  * Tested up to: 5.8.0
