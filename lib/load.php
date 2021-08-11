@@ -15,8 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Load lib files.
  */
-require dirname( __FILE__ ) . '/options.php';
+require_once __DIR__ . '/api.php';
+require_once __DIR__ . '/options.php';
 
 /**
- * Load inc files.
+ * Load admin files.
  */
+require_once dirname( __DIR__ ) . '/admin/plugins.php';
