@@ -83,22 +83,6 @@ function get_plugin_details( $result, $action, $args ) {
 		'update_uri'   => $update_uri,
 	) = $github_plugins[ $args->slug ];
 
-	// Try to get plugin details from the transient before checking the API.
-	$transient_name = hrswp\plugin_meta( 'transient_base' ) . '_' . substr( $args->slug, 0, 16 ) . '_' . md5( $update_uri );
-	$plugin_details = get_transient( $transient_name );
-
-	if ( false === $plugin_details ) {
-		$plugin_details = api\get_repository_details( $update_uri );
-
-		if ( ! is_wp_error( $plugin_details ) && ! empty( $plugin_details['zipball_url'] ) ) {
-			// Save results of a successful API call to a 12-hour transient.
-			set_transient( $transient_name, $plugin_details, 12 * HOUR_IN_SECONDS );
-		} else {
-			// Save results of an error to a 1-hour transient to prevent overloading the GitHub API.
-			set_transient( $transient_name, 'request-error-wait', HOUR_IN_SECONDS );
-		}
-	}
-
 	$result                    = new \stdClass();
 	$result->name              = $name;
 	$result->slug              = $args->slug;
@@ -111,7 +95,9 @@ function get_plugin_details( $result, $action, $args ) {
 	$result->short_description = $description;
 	$result->sections          = array( 'description' => $description );
 
-	if ( ! is_wp_error( $plugin_details ) && 'request-error-wait' !== $plugin_details ) {
+	$plugin_details = api\get_repository_details( $update_uri, $args->slug );
+
+	if ( ! is_wp_error( $plugin_details ) && is_array( $plugin_details ) ) {
 		$changelog = sprintf(
 			/* translators: 1: the plugin version number, 2: the HTML formatted release message from GitHub */
 			__( '<strong>Version %1$s Changes</strong>%2$s', 'hrswp-github-updater' ),

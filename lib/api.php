@@ -72,33 +72,38 @@ function get_github_plugins() {
  * @since 0.4.0
  *
  * @param string $request_uri Required. The full URI of the GitHub repository to fetch.
- * @return array|WP_Error Array of parsed JSON GitHub repository details or a WP_Error object if the request failed.
+ * @param string $slug        Required. The slug name of the plugin to check.
+ * @return array|WP_Error|string Array of parsed JSON GitHub repository details, or a WP_Error object if the request failed and a string if it failed more than once in an hour.
  */
-function get_repository_details( $request_uri = '' ) {
-	$response = wp_remote_get( esc_url_raw( $request_uri ) );
+function get_repository_details( $request_uri = '', $slug = '' ) {
+	// Try to get plugin details from the transient before checking the API.
+	$transient = hrswp\plugin_meta( 'transient_base' ) . '_' . substr( $slug, 0, 16 ) . '_' . md5( $request_uri );
+	$response  = get_transient( $transient );
 
-	// Checks for WP Error, missing response, and incorrect response type.
-	$response_code = wp_remote_retrieve_response_code( $response );
+	if ( false === $response ) {
+		$response = wp_remote_get( esc_url_raw( $request_uri ) );
 
-	// Check that the response structure matches what we expect.
-	if ( '' === $response_code ) {
-		$error = sprintf(
-			/* translators: the API request URL */
-			__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
-			esc_url_raw( $request_uri )
-		);
-		return new \WP_Error( 'invalid-response', $error );
+		// Checks for WP Error, missing response, and incorrect response type.
+		$response_code = wp_remote_retrieve_response_code( $response );
+
+		if ( '' === $response_code || ! in_array( (int) $response_code, array( 200, 302, 304 ) ) ) {
+			$error = sprintf(
+				/* translators: the API request URL */
+				__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
+				esc_url_raw( $request_uri )
+			);
+
+			// Save results of an error to a 1-hour transient to prevent overloading the GitHub API.
+			set_transient( $transient, 'request-error-wait', HOUR_IN_SECONDS );
+
+			return new \WP_Error( 'invalid-response', $error );
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		// Save results of a successful API call to a 10-hour transient.
+		set_transient( $transient, $response, 10 * HOUR_IN_SECONDS );
 	}
 
-	if ( ! in_array( (int) $response_code, array( 200, 302, 304 ) ) ) {
-		$error = sprintf(
-			/* translators: 1: the API request URL, 2: the HTTP response code */
-			__( 'GitHub API request failed. The request for %1$s returned HTTP code: %2$s.', 'hrswp-github-updater' ),
-			esc_url_raw( $request_uri ),
-			$response_code
-		);
-		return new \WP_Error( 'invalid-response', $error );
-	}
-
-	return json_decode( wp_remote_retrieve_body( $response ), true );
+	return $response;
 }
