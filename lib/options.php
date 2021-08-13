@@ -34,8 +34,9 @@ function update_plugin_option( $option = array() ) {
 		return add_option(
 			hrswp\plugin_meta( 'option_name' ),
 			array(
-				'status'  => 'active',
-				'version' => '0.0.0',
+				'status'         => 'active',
+				'version'        => '0.0.0',
+				'transient_keys' => array(),
 			)
 		);
 	}
@@ -96,11 +97,39 @@ function update_plugin_version() {
 		return;
 	}
 
-	// Update the plugin version number.
+	// Update the plugin version number and add transient key for tracking.
 	$plugin_data = get_plugin_data( hrswp\plugin_meta( 'path' ) );
 	update_plugin_option( array( 'version' => $plugin_data['Version'] ) );
+	update_transient_keys( $transient_name );
 
 	// Set the updater timeout transient to prevent checking for 12 hours.
 	set_transient( $transient_name, '1', 12 * HOUR_IN_SECONDS );
 }
+
+/**
+ * Updates the transient keys stored in the plugin status option.
+ *
+ * @since 0.2.0
+ *
+ * @param string $key The name of the transient.
+ * @return bool True on successful update, false on failure.
+ */
+function update_transient_keys( $key ) {
+	// Get the existing transient keys array from the plugin status option.
+	$keys = get_plugin_option( 'transient_keys' );
+
+	// Add the new key to the array.
+	$keys[] = (string) $key;
+
+	// Update the plugin status option with the new array.
+	return update_plugin_option( array( 'transient_keys' => $keys ) );
+}
+
+/**
+ * Deletes all plugin options.
+ *
+ * @since 0.2.0
+ */
+function clean() {}
+
 add_action( 'admin_init', __NAMESPACE__ . '\update_plugin_version' );
