@@ -137,5 +137,9 @@ function uninstall() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
+	// Remove plugin options.
 	options\delete_plugin_option();
+
+	// Remove plugin transients.
+	options\flush_transients();
 }

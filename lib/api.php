@@ -9,6 +9,7 @@
 namespace HRS\HrswpGitHubUpdater\lib\api;
 
 use HRS\HrswpGitHubUpdater as hrswp;
+use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );
@@ -81,6 +82,9 @@ function get_repository_details( $request_uri = '', $slug = '' ) {
 	$response  = get_transient( $transient );
 
 	if ( false === $response ) {
+		// Add transient key to the plugin options for tracking.
+		options\update_transient_keys( $transient );
+
 		$response = wp_remote_get( esc_url_raw( $request_uri ) );
 
 		// Checks for WP Error, missing response, and incorrect response type.
