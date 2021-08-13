@@ -126,10 +126,21 @@ function update_transient_keys( $key ) {
 }
 
 /**
- * Deletes all plugin options.
+ * Deletes all plugin transients.
  *
  * @since 0.2.0
  */
-function clean() {}
+function flush_transients() {
+	// Get the existing transient keys array from the plugin status option.
+	$keys = get_plugin_option( 'transient_keys' );
+
+	// Delete all of the transients.
+	foreach ( $keys as $key ) {
+		delete_transient( $key );
+	}
+
+	// Clear the transient keys list from the plugin status option.
+	update_plugin_option( array( 'transient_keys' => array() ) );
+}
 
 add_action( 'admin_init', __NAMESPACE__ . '\update_plugin_version' );
