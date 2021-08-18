@@ -81,7 +81,8 @@ function plugin_meta( $meta = '' ) {
 	$plugin_meta = array(
 		'path'           => __FILE__,
 		'slug'           => 'hrswp-github-updater',
-		'option_name'    => 'hrswp_github_updater_status',
+		'option_status'  => 'hrswp_gu_status',
+		'option_plugins' => 'hrswp_gu_settings',
 		'transient_base' => 'hrswp_gu',
 	);
 
@@ -137,8 +138,12 @@ function uninstall() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
+	// Unregister plugin settings.
+	unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
+
 	// Remove plugin options.
 	options\delete_plugin_option();
+	delete_option( plugin_meta( 'option_plugins' ) );
 
 	// Remove plugin transients.
 	options\flush_transients();
