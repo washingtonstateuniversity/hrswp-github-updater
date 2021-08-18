@@ -36,7 +36,7 @@ function get_github_plugins() {
 
 	// Save each plugin with a GitHub hostname.
 	$github_plugins = array();
-	foreach( $plugins as $plugin_file => $plugin_data ) {
+	foreach ( $plugins as $plugin_file => $plugin_data ) {
 		if ( ! $plugin_data['UpdateURI'] ) {
 			continue;
 		}
@@ -90,7 +90,7 @@ function get_repository_details( $request_uri = '', $slug = '' ) {
 		// Checks for WP Error, missing response, and incorrect response type.
 		$response_code = wp_remote_retrieve_response_code( $response );
 
-		if ( '' === $response_code || ! in_array( (int) $response_code, array( 200, 302, 304 ) ) ) {
+		if ( '' === $response_code || ! in_array( (int) $response_code, array( 200, 302, 304 ), true ) ) {
 			$error = sprintf(
 				/* translators: the API request URL */
 				__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
