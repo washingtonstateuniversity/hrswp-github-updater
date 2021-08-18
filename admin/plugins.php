@@ -66,11 +66,6 @@ function get_plugin_details( $result, $action, $args ) {
 
 	$github_plugins = api\get_github_plugins();
 
-	// Return the result now if it isn't a GitHub-hosted plugin.
-	if ( ! array_key_exists( $args->slug, $github_plugins ) ) {
-		return $result;
-	}
-
 	list(
 		'name'         => $name,
 		'description'  => $description,
@@ -94,6 +89,21 @@ function get_plugin_details( $result, $action, $args ) {
 	$result->homepage          = $plugin_uri;
 	$result->short_description = $description;
 	$result->sections          = array( 'description' => $description );
+
+	$managed_plugins = get_option( hrswp\plugin_meta( 'option_plugins' ) );
+
+	// Return the result now if it isn't a GitHub-hosted plugin.
+	if ( ! array_key_exists( $args->slug, $managed_plugins ) ) {
+		$result->sections = array(
+			'description' => sprintf(
+				/* translators: %s: Link to the plugin options screen, %s: The plugin description content. */
+				'<strong>' . __( 'Not currently managed by GitHub Updater plugin. Visit the %s to add it.', 'hrswp-github-updater' ) . '</strong><br><br>%s',
+				'<a href="' . esc_url( get_admin_url( get_current_blog_id(), 'options-general.php?page=hrswp-github-updater' ) ) . '">' . __( 'plugin settings', 'hrswp-github-updater' ) . '</a>',
+				$description
+			),
+		);
+		return $result;
+	}
 
 	$plugin_details = api\get_repository_details( $update_uri, $args->slug );
 
@@ -123,18 +133,19 @@ add_filter( 'plugins_api', __NAMESPACE__ . '\get_plugin_details', 10, 3 );
  *
  * This function modifies the plugin_meta variable to add a "View Details"
  * link like the one for plugins in the WP plugin repository. The link will
- * generate the modal ({@uses install_plugin_information()}) using the
- * `plugins_api` filter, which we hook into with `get_plugin_details()`.
+ * generate the modal using the `plugins_api` filter, which we hook into
+ * with `get_plugin_details()`.
  *
  * @since 0.2.0
  *
- * @param array  @plugin_meta The plugin's metadata.
- * @param string @plugin_file Path to the plugin file, relative to the plugins directory.
+ * @param array  $plugin_meta The plugin's metadata.
+ * @param string $plugin_file Path to the plugin file, relative to the plugins directory.
+ * @param array  $plugin_data The plugin data.
  * @return string HTML formatted meta data for the plugins table row, altered or not.
  */
-function update_plugin_row_meta( $plugin_meta, $plugin_file ) {
+function update_plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data ) {
 	if ( ! current_user_can( 'activate_plugins' ) ) {
-		wp_die( __( 'Sorry, you are not allowed to manage plugins for this site.' ) );
+		return;
 	}
 
 	$github_plugins = api\get_github_plugins();
@@ -149,11 +160,26 @@ function update_plugin_row_meta( $plugin_meta, $plugin_file ) {
 		'<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="%s">%s</a>',
 		esc_url( network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $plugin_slug . '&TB_iframe=true&width=600&height=550' ) ),
 		/* translators: the plugin name */
-		esc_attr( sprintf( __( 'More information about %s', 'hrswp-github-updater' ), $github_plugins[ $plugin_slug ]['name'] ) ),
-		esc_attr( $github_plugins[ $plugin_slug ]['name'] ),
+		esc_attr( sprintf( __( 'More information about %s', 'hrswp-github-updater' ), $plugin_data['Name'] ) ),
+		esc_attr( $plugin_data['Name'] ),
 		__( 'View details', 'hrswp-github-updater' )
 	);
 
 	return $plugin_meta;
 }
-add_filter( 'plugin_row_meta', __NAMESPACE__ . '\update_plugin_row_meta', 10, 2 );
+add_filter( 'plugin_row_meta', __NAMESPACE__ . '\update_plugin_row_meta', 10, 3 );
+
+/**
+ * Adds a "Settings" action to the plugin action links.
+ *
+ * @since 0.2.0
+ *
+ * @param string[] $actions     An array of plugin action links.
+ * @return string[] The modified array of plugin action links.
+ */
+function add_plugin_row_actions( $actions ) {
+	$actions[] = '<a href="' . esc_url( get_admin_url( get_current_blog_id(), 'options-general.php?page=hrswp-github-updater' ) ) . '">' . __( 'Settings', 'hrswp-github-updater' ) . '</a>';
+
+	return $actions;
+}
+add_filter( 'plugin_action_links_' . plugin_basename( hrswp\plugin_meta( 'path' ) ), __NAMESPACE__ . '\add_plugin_row_actions', 10, 1 );
