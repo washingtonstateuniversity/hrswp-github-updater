@@ -10,7 +10,7 @@
  * Text Domain: hrswp-github-updater
  * Requires at least: 5.8
  * Tested up to: 5.8.0
- * Requires PHP: 7.0
+ * Requires PHP: 7.3
  *
  * @package HRSWP_GitHub_Updater
  * @since 0.1.0
