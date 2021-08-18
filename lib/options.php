@@ -15,6 +15,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Assigns the default plugin options when they do not already exist.
+ *
+ * @since 0.2.0
+ */
+function set_default_options() {
+	// Create the 'option_status' option to track plugin details.
+	add_option(
+		hrswp\plugin_meta( 'option_status' ),
+		array(
+			'status'         => 'active',
+			'version'        => '0.0.0',
+			'transient_keys' => array(),
+		)
+	);
+
+	// Create the 'option_plugins' option to track managed plugins.
+	add_option( hrswp\plugin_meta( 'option_plugins' ), array() );
+}
+
+/**
  * Updates the plugin option with given values or creates it.
  *
  * @since 0.1.0
@@ -27,23 +47,16 @@ function update_plugin_option( $option = array() ) {
 		return false;
 	}
 
-	$plugin_option = get_option( hrswp\plugin_meta( 'option_name' ) );
+	$plugin_option = get_option( hrswp\plugin_meta( 'option_status' ) );
 
-	/* If plugin option is missing then create it using initial values. */
 	if ( ! $plugin_option ) {
-		return add_option(
-			hrswp\plugin_meta( 'option_name' ),
-			array(
-				'status'         => 'active',
-				'version'        => '0.0.0',
-				'transient_keys' => array(),
-			)
-		);
+		// If 'option_status' is missing, then so are all of them; create them.
+		set_default_options();
 	}
 
 	$plugin_option = wp_parse_args( $option, $plugin_option );
 
-	return update_option( hrswp\plugin_meta( 'option_name' ), $plugin_option );
+	return update_option( hrswp\plugin_meta( 'option_status' ), $plugin_option );
 }
 
 /**
@@ -57,14 +70,14 @@ function update_plugin_option( $option = array() ) {
 function delete_plugin_option( $option_name = '' ) {
 	// Delete the full option value if no option name is specified.
 	if ( ! $option_name ) {
-		return delete_option( hrswp\plugin_meta( 'option_name' ) );
+		return delete_option( hrswp\plugin_meta( 'option_status' ) );
 	}
 
 	// If supplied an option name, remove that value.
-	$plugin_option = get_option( hrswp\plugin_meta( 'option_name' ) );
+	$plugin_option = get_option( hrswp\plugin_meta( 'option_status' ) );
 	unset( $plugin_option[ $option_name ] );
 
-	return update_option( hrswp\plugin_meta( 'option_name' ), $plugin_option );
+	return update_option( hrswp\plugin_meta( 'option_status' ), $plugin_option );
 }
 
 /**
@@ -76,7 +89,7 @@ function delete_plugin_option( $option_name = '' ) {
  * @return mixed The value of the requested plugin option or an array of all options.
  */
 function get_plugin_option( $option_name = '' ) {
-	$plugin_option = get_option( hrswp\plugin_meta( 'option_name' ) );
+	$plugin_option = get_option( hrswp\plugin_meta( 'option_status' ) );
 
 	if ( ! $option_name ) {
 		return $plugin_option;
