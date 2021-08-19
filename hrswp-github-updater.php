@@ -1,16 +1,16 @@
 <?php
 /**
  * Plugin Name: HRSWP GitHub Updater
- * Version: 0.1.0
+ * Version: 0.2.0
  * Description: A WSU HRS WordPress plugin to manage updates for GitHub-hosted plugins and themes.
  * Author: Adam Turner, washingtonstateuniversity
  * Author URI: https://hrs.wsu.edu/
  * Plugin URI: https://github.com/washingtonstateuniversity/hrswp-github-updater
- * Update URI: https://github.com/washingtonstateuniversity/hrswp-github-updater/releases/latest
+ * Update URI: https://api.github.com/repos/washingtonstateuniversity/hrswp-github-updater/releases/latest
  * Text Domain: hrswp-github-updater
  * Requires at least: 5.8
  * Tested up to: 5.8.0
- * Requires PHP: 7.0
+ * Requires PHP: 7.3
  *
  * @package HRSWP_GitHub_Updater
  * @since 0.1.0
@@ -66,7 +66,7 @@ function pre_init() {
 	}
 
 	/* Load required plugin files. */
-	require dirname( __FILE__ ) . '/lib/load.php';
+	require dirname( __FILE__ ) . '/inc/load.php';
 }
 
 /**
@@ -81,8 +81,9 @@ function plugin_meta( $meta = '' ) {
 	$plugin_meta = array(
 		'path'           => __FILE__,
 		'slug'           => 'hrswp-github-updater',
-		'option_name'    => 'hrswp_github_updater_status',
-		'transient_name' => 'hrswp_github_updater_timeout',
+		'option_status'  => 'hrswp_gu_status',
+		'option_plugins' => 'hrswp_gu_settings',
+		'transient_base' => 'hrswp_gu',
 	);
 
 	if ( '' !== $meta ) {
@@ -137,5 +138,13 @@ function uninstall() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
+	// Unregister plugin settings.
+	unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
+
+	// Remove plugin options.
 	options\delete_plugin_option();
+	delete_option( plugin_meta( 'option_plugins' ) );
+
+	// Remove plugin transients.
+	options\flush_transients();
 }
