@@ -19,6 +19,27 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## 0.2.0-rc.1 (:construction: Future)
 
+### Added
+
+- Create admin settings screen and functions to handle registering, unregistering, and updating settings options. (a3a13a5)
+- Add function to delete plugin transients and hook into uninstall. (c0c43eb)
+- Add plugin option to store transient keys for later cleanup. (c0c43eb)
+- Create the GitHub plugin version check handler. (1146431)
+- Create `api.php` file in `lib` directory with function to get all plugins with a GitHub URL in the `Update URI` field, and a function to get repo details from the GitHub API. (1434a5f, 63d6012)
+- Create `plugins.php` file in `admin` directory with modifications to the WP Plugins admin screen. (233ee5b, 63d6012)
+- Add function to help retrieve plugin status option values. (afa6e98)
+
+### Changed
+
+- Bump required PHP version to 7.3. (9bdc182)
+- Update plugins screen with managed plugins option and settings to check that the GitHub plugin is one we are managing. (a3a13a5)
+- Set default settings and change option names. (a3a13a5)
+- Move the GitHub repository call transient check to the API function. (1146431)
+- Move the `load` file to the `inc` directory. (301ca55)
+- Update options functions to use new transient naming. (724820a)
+- Shorten the transient namespace to help with key length. (28d0d26)
+- Update npm-package-json-lint from 5.1.0 to 5.2.3. (c2de2cb)
+
 ## 0.1.0 (2021-08-04)
 
 ### Added
