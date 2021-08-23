@@ -111,3 +111,32 @@ function get_repository_details( $request_uri = '', $slug = '' ) {
 
 	return $response;
 }
+
+/**
+ * Gets the dirname if the thing being upgraded is managed by GitHub Updater.
+ *
+ * @since 0.3.0
+ *
+ * @param WP_Upgrader $upgrader WP_Upgrader instance for the thing being upgraded.
+ * @return string|false The directory name if the thing being upgraded is managed by this plugin, false if error or not managed.
+ */
+function upgrading_plugin_dirname( $upgrader ) {
+	if ( ! isset( $upgrader, $upgrader->skin ) ) {
+		return false;
+	}
+
+	$skin = $upgrader->skin;
+
+	if ( isset( $skin->plugin_info ) && isset( $skin->plugin_info['UpdateURI'] ) ) {
+		$github_plugins  = get_github_plugins();
+		$managed_plugins = get_option( hrswp\plugin_meta( 'option_plugins' ) );
+
+		foreach ( $github_plugins as $slug => $plugin_data ) {
+			if ( $skin->plugin_info['UpdateURI'] === $plugin_data['update_uri'] && array_key_exists( $slug, $managed_plugins ) ) {
+				return $slug;
+			}
+		}
+	}
+
+	return false;
+}
