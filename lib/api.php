@@ -46,6 +46,7 @@ function get_github_plugins() {
 		}
 
 		$github_plugins[ dirname( plugin_basename( $plugin_file ) ) ] = array(
+			'file'           => $plugin_file,
 			'name'           => $plugin_data['Name'],
 			'description'    => $plugin_data['Description'],
 			'author'         => $plugin_data['AuthorName'],

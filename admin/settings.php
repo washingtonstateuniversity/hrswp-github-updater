@@ -10,6 +10,7 @@ namespace HRS\HrswpGitHubUpdater\admin\settings;
 
 use HRS\HrswpGitHubUpdater as hrswp;
 use HRS\HrswpGitHubUpdater\lib\api;
+use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );
@@ -22,9 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function settings_section_github_plugins() {
 	printf(
-		/* translators: %s: Documentation link. */
-		'<p>' . esc_html__( 'The GitHub Updater plugin can help to watch for and handle updates for plugins hosted on GitHub instead of the WordPress plugin directory. In order to manage a GitHub-hosted plugin it must have the %s with a valid GitHub API URI. A valid GitHub URI is formatted as: https://api.github.com/repos/{owner}/{repo}/releases/latest', 'hrswp-github-updater' ) . '</p>',
-		'<a href="' . esc_url( 'https://make.wordpress.org/core/2021/06/29/introducing-update-uri-plugin-header-in-wordpress-5-8/' ) . '">' . esc_html__( 'Update URI header field', 'hrswp-github-updater' ) . '</a>'
+		/* translators: 1: Documentation link, 2: sample GitHub update URL. */
+		'<p>' . esc_html__( 'The GitHub Updater plugin can help to watch for and handle updates for plugins hosted on GitHub instead of the WordPress plugin directory. In order to manage a GitHub-hosted plugin it must have the %1$s with a valid GitHub API URI. A valid GitHub URI is formatted as: %2$s', 'hrswp-github-updater' ) . '</p><p>' . esc_html__( 'Save changes to refresh the version data for managed plugins.', 'hrswp-github-updater' ) . '</p>',
+		'<a href="' . esc_url( 'https://make.wordpress.org/core/2021/06/29/introducing-update-uri-plugin-header-in-wordpress-5-8/' ) . '">' . esc_html__( 'Update URI header field', 'hrswp-github-updater' ) . '</a>',
+		'<code>https://api.github.com/repos/{owner}/{repo}/releases/latest</code>'
 	);
 }
 
@@ -66,6 +68,18 @@ function settings_field_github_plugins() {
 function settings_page_content() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
+	}
+
+	/*
+	 * Refresh plugin update information when settings are saved. WP doesn't
+	 * pass the nonce all the way through to here, so we don't have it.
+	 */
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) {
+		if ( ! wp_installing() && ! wp_doing_cron() ) {
+			options\flush_transients();
+			wp_clean_plugins_cache( true );
+		}
 	}
 
 	ob_start();

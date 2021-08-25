@@ -31,11 +31,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return object|false The plugin update data with the latest details or false.
  */
 function version_check( $update, $plugin_data, $plugin_file ) {
-	$github_plugins = api\get_github_plugins();
-	$slug           = dirname( $plugin_file );
+	$managed_plugins = get_option( hrswp\plugin_meta( 'option_plugins' ) );
+	$slug            = dirname( $plugin_file );
 
 	// Return the result now if it isn't a GitHub-hosted plugin.
-	if ( ! array_key_exists( $slug, $github_plugins ) ) {
+	if ( ! array_key_exists( $slug, $managed_plugins ) ) {
 		return $update;
 	}
 
