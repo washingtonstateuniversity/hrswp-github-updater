@@ -10,9 +10,96 @@ namespace HRS\HrswpGitHubUpdater\admin\settings;
 
 use HRS\HrswpGitHubUpdater as hrswp;
 use HRS\HrswpGitHubUpdater\lib\api;
+use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );
+}
+
+/**
+ * Handles query parameter actions on the plugin settings page.
+ *
+ * @since 0.3.0
+ *
+ * @return void|false Void on successful action and false otherwise.
+ */
+function handle_settings_actions() {
+	if ( empty( $_REQUEST ) || ! current_user_can( 'manage_options' ) ) {
+		return false;
+	}
+
+	if ( isset( $_REQUEST['hrswp_gu_action'] ) && ! empty( $_REQUEST['hrswp_gu_action'] ) ) {
+
+		if ( 'flush' === $_REQUEST['hrswp_gu_action'] ) {
+
+			// Check the nonce.
+			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'hrswp_gu_action_flush' ) ) {
+				wp_die( esc_html__( 'You do not have permission to do this thing.', 'wsuwp-a11y-status' ) );
+			}
+
+			if ( wp_installing() || wp_doing_cron() ) {
+				return false;
+			}
+
+			// Flush transients.
+			options\flush_transients();
+
+			// Force refresh of plugin update information.
+			wp_clean_plugins_cache( true );
+
+			$status = 'success';
+		} else {
+			$status = 'fail';
+		}
+
+		$redirect = add_query_arg(
+			array(
+				'hrswp_gu_refresh' => $status,
+				'_wpnonce'         => wp_create_nonce( 'hrswp_gu_refresh_nonce' ),
+			),
+			admin_url( 'options-general.php?page=hrswp-github-updater' )
+		);
+
+		wp_redirect( $redirect );
+		exit;
+	}
+
+	return false;
+}
+
+/**
+ * Displays a notice following a plugin settings page action.
+ *
+ * @since 0.3.0
+ */
+function settings_actions_notice() {
+	if ( empty( $_REQUEST ) ) {
+		return;
+	}
+
+	if ( ! isset( $_REQUEST['hrswp_gu_refresh'] ) || empty( $_REQUEST['hrswp_gu_refresh'] ) ) {
+		return;
+	}
+
+	if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'hrswp_gu_refresh_nonce' ) ) {
+		wp_die( esc_html__( 'You do not have permission.' ) );
+	}
+
+	$message = ( 'success' === $_REQUEST['hrswp_gu_refresh'] ) ?
+		array(
+			'class' => 'notice-success',
+			'text'  => __( 'GitHub Updater data refreshed.' ),
+		) :
+		array(
+			'class' => 'notice-error',
+			'text'  => __( 'GitHub Updater data could not be refreshed.' ),
+		);
+
+	printf(
+		'<div class="hrswp-gu notice is-dismissible %s"><p>%s</p></div>',
+		esc_attr( $message['class'] ),
+		esc_html( $message['text'] )
+	);
 }
 
 /**
@@ -68,6 +155,8 @@ function settings_page_content() {
 		return;
 	}
 
+	handle_settings_actions();
+
 	ob_start();
 
 	$slug = hrswp\plugin_meta( 'slug' );
@@ -78,8 +167,14 @@ function settings_page_content() {
 
 	ob_end_clean();
 
+	$transient_flush_uri = wp_nonce_url(
+		add_query_arg( 'hrswp_gu_action', 'flush', 'options-general.php?page=hrswp-github-updater' ),
+		'hrswp_gu_action_flush'
+	);
+
 	$output  = '<h1>' . esc_html( get_admin_page_title() ) . '</h1>';
 	$output .= "<form action=\"options.php\" method=\"post\">${fields}</form>";
+	$output .= '<a href="' . esc_url( $transient_flush_uri ) . '">' . esc_html__( 'Refresh plugin data', 'hrswp-github-updater' ) . '</a>.';
 
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo "<div class=\"wrap\">${output}</div>";
@@ -130,3 +225,4 @@ function register_settings_page() {
 
 add_action( 'admin_init', __NAMESPACE__ . '\register_settings' );
 add_action( 'admin_menu', __NAMESPACE__ . '\register_settings_page' );
+add_action( 'admin_notices', __NAMESPACE__ . '\settings_actions_notice' );
