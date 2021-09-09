@@ -106,7 +106,11 @@ function activate() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
-	options\update_plugin_option( array( 'status' => 'active' ) );
+	if ( false === get_option( plugin_meta( 'option_status' ) ) ) {
+		options\set_default_options();
+	} else {
+		options\update_plugin_option( array( 'status' => 'active' ) );
+	}
 }
 
 /**
@@ -123,6 +127,7 @@ function deactivate() {
 	}
 
 	options\update_plugin_option( array( 'status' => 'inactive' ) );
+	delete_transient( plugin_meta( 'transient_base' ) . '_timeout' );
 }
 
 /**
