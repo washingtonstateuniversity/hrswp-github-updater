@@ -129,47 +129,6 @@ function get_plugin_details( $result, $action, $args ) {
 add_filter( 'plugins_api', __NAMESPACE__ . '\get_plugin_details', 10, 3 );
 
 /**
- * Adds a "View details" link to the plugin row meta.
- *
- * This function modifies the plugin_meta variable to add a "View Details"
- * link like the one for plugins in the WP plugin repository. The link will
- * generate the modal using the `plugins_api` filter, which we hook into
- * with `get_plugin_details()`.
- *
- * @since 0.2.0
- *
- * @param array  $plugin_meta The plugin's metadata.
- * @param string $plugin_file Path to the plugin file, relative to the plugins directory.
- * @param array  $plugin_data The plugin data.
- * @return string HTML formatted meta data for the plugins table row, altered or not.
- */
-function update_plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data ) {
-	if ( ! current_user_can( 'activate_plugins' ) ) {
-		return;
-	}
-
-	$github_plugins = api\get_github_plugins();
-	$plugin_slug    = dirname( $plugin_file );
-
-	// Return the result now if it isn't a GitHub-hosted plugin.
-	if ( ! array_key_exists( $plugin_slug, $github_plugins ) ) {
-		return $plugin_meta;
-	}
-
-	$plugin_meta[] = sprintf(
-		'<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="%s">%s</a>',
-		esc_url( network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $plugin_slug . '&TB_iframe=true&width=600&height=550' ) ),
-		/* translators: the plugin name */
-		esc_attr( sprintf( __( 'More information about %s', 'hrswp-github-updater' ), $plugin_data['Name'] ) ),
-		esc_attr( $plugin_data['Name'] ),
-		__( 'View details', 'hrswp-github-updater' )
-	);
-
-	return $plugin_meta;
-}
-add_filter( 'plugin_row_meta', __NAMESPACE__ . '\update_plugin_row_meta', 10, 3 );
-
-/**
  * Adds a "Settings" action to the plugin action links.
  *
  * @since 0.2.0
