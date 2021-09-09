@@ -34,8 +34,7 @@ function version_check( $update, $plugin_data, $plugin_file ) {
 	$managed_plugins = get_option( hrswp\plugin_meta( 'option_plugins' ) );
 	$slug            = dirname( $plugin_file );
 
-	// Return the result now if it isn't a GitHub-hosted plugin.
-	if ( ! array_key_exists( $slug, $managed_plugins ) ) {
+	if ( empty( $managed_plugins ) || ! array_key_exists( $slug, $managed_plugins ) ) {
 		return $update;
 	}
 
