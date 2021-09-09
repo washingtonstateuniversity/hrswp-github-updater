@@ -66,6 +66,11 @@ function get_plugin_details( $result, $action, $args ) {
 
 	$github_plugins = api\get_github_plugins();
 
+	// Return the result now if it isn't a GitHub-hosted plugin.
+	if ( ! array_key_exists( $args->slug, $github_plugins ) ) {
+		return $result;
+	}
+
 	list(
 		'name'         => $name,
 		'description'  => $description,
