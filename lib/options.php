@@ -24,9 +24,10 @@ function set_default_options() {
 	add_option(
 		hrswp\plugin_meta( 'option_status' ),
 		array(
-			'status'         => 'active',
-			'version'        => '0.0.0',
-			'transient_keys' => array(),
+			'status'                => 'active',
+			'version'               => '0.0.0',
+			'transient_keys'        => array(),
+			'unmanaged_plugins_nag' => 'show',
 		)
 	);
 
@@ -49,8 +50,7 @@ function update_plugin_option( $option = array() ) {
 
 	$plugin_option = get_option( hrswp\plugin_meta( 'option_status' ) );
 
-	if ( ! $plugin_option ) {
-		// If 'option_status' is missing, then so are all of them; create them.
+	if ( false === $plugin_option ) {
 		set_default_options();
 	}
 
