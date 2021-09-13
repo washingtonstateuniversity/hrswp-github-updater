@@ -91,6 +91,10 @@ function delete_plugin_option( $option_name = '' ) {
 function get_plugin_option( $option_name = '' ) {
 	$plugin_option = get_option( hrswp\plugin_meta( 'option_status' ) );
 
+	if ( false === $plugin_option ) {
+		set_default_options();
+	}
+
 	if ( ! $option_name ) {
 		return $plugin_option;
 	}
