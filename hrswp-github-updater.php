@@ -143,13 +143,13 @@ function uninstall() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
+	// Remove plugin transients.
+	options\flush_transients();
+
 	// Unregister plugin settings.
 	unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
 
 	// Remove plugin options.
-	options\delete_plugin_option();
+	delete_option( plugin_meta( 'option_status' ) );
 	delete_option( plugin_meta( 'option_plugins' ) );
-
-	// Remove plugin transients.
-	options\flush_transients();
 }
