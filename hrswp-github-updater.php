@@ -136,6 +136,8 @@ function deactivate() {
  * @since 0.1.0
  */
 function uninstall() {
+	global $new_allowed_options, $wp_registered_settings;
+
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
@@ -146,8 +148,10 @@ function uninstall() {
 	// Remove plugin transients.
 	options\flush_transients();
 
-	// Unregister plugin settings.
-	unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
+	// Unregister plugin settings if they exist.
+	if ( isset( $new_allowed_options[ plugin_meta( 'slug' ) ] ) && isset( $wp_registered_settings[ plugin_meta( 'option_plugins' ) ] ) ) {
+		unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
+	}
 
 	// Remove plugin options.
 	delete_option( plugin_meta( 'option_status' ) );
