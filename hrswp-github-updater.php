@@ -9,7 +9,7 @@
  * Update URI: https://api.github.com/repos/washingtonstateuniversity/hrswp-github-updater/releases/latest
  * Text Domain: hrswp-github-updater
  * Requires at least: 5.8
- * Tested up to: 5.8.0
+ * Tested up to: 5.8.1
  * Requires PHP: 7.3
  *
  * @package HRSWP_GitHub_Updater
