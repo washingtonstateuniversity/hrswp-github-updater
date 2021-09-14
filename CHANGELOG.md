@@ -17,6 +17,28 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 ### Security (in case of vulnerabilities.)
 -->
 
+## 0.3.0 (2021-09-14)
+
+### Added
+
+- Add a user notice when no GitHub plugins are selected to be managed, close #8. (6f1e249)
+- Add actions to refresh plugin data when users save HRSWP GU settings, close #5 and #7. (ff9ab9b)
+- Add functions to correct the upgrade directory name during update process. (b157e53)
+
+### Changed
+
+- Bump WP tested-to to 5.8.1.
+- Add option key to the main plugin option to track the unmanaged plugins nag, and fix default options. (6f1e249)
+- Add plugin file value to the `github_plugins` array. (ff9ab9b)
+
+### Fixed
+
+- Fix #12 reorder delete actions to fix lingering data and check setting exists before trying to unregister. (2edb64e)
+- Fix #4 add check to prevent undefined index error on new activation. (4c51fca)
+- Fix #9 no not override non-GitHub plugin descriptions. (66adb9d)
+- Fix #10 remove manually added view details link. (ddc92e4)
+- Fix non-managed plugins getting version update info. (ff9ab9b)
+
 ## 0.2.0 (2021-08-19)
 
 ### Added

@@ -10,6 +10,7 @@ namespace HRS\HrswpGitHubUpdater\admin\settings;
 
 use HRS\HrswpGitHubUpdater as hrswp;
 use HRS\HrswpGitHubUpdater\lib\api;
+use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );
@@ -22,9 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function settings_section_github_plugins() {
 	printf(
-		/* translators: %s: Documentation link. */
-		'<p>' . esc_html__( 'The GitHub Updater plugin can help to watch for and handle updates for plugins hosted on GitHub instead of the WordPress plugin directory. In order to manage a GitHub-hosted plugin it must have the %s with a valid GitHub API URI. A valid GitHub URI is formatted as: https://api.github.com/repos/{owner}/{repo}/releases/latest', 'hrswp-github-updater' ) . '</p>',
-		'<a href="' . esc_url( 'https://make.wordpress.org/core/2021/06/29/introducing-update-uri-plugin-header-in-wordpress-5-8/' ) . '">' . esc_html__( 'Update URI header field', 'hrswp-github-updater' ) . '</a>'
+		/* translators: 1: Documentation link, 2: sample GitHub update URL. */
+		'<p>' . esc_html__( 'The GitHub Updater plugin can help to watch for and handle updates for plugins hosted on GitHub instead of the WordPress plugin directory. In order to manage a GitHub-hosted plugin it must have the %1$s with a valid GitHub API URI. A valid GitHub URI is formatted as: %2$s', 'hrswp-github-updater' ) . '</p><p>' . esc_html__( 'Save changes to refresh the version data for managed plugins.', 'hrswp-github-updater' ) . '</p>',
+		'<a href="' . esc_url( 'https://make.wordpress.org/core/2021/06/29/introducing-update-uri-plugin-header-in-wordpress-5-8/' ) . '">' . esc_html__( 'Update URI header field', 'hrswp-github-updater' ) . '</a>',
+		'<code>https://api.github.com/repos/{owner}/{repo}/releases/latest</code>'
 	);
 }
 
@@ -68,6 +70,18 @@ function settings_page_content() {
 		return;
 	}
 
+	/*
+	 * Refresh plugin update information when settings are saved. WP doesn't
+	 * pass the nonce all the way through to here, so we don't have it.
+	 */
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) {
+		if ( ! wp_installing() && ! wp_doing_cron() ) {
+			options\flush_transients();
+			wp_clean_plugins_cache( true );
+		}
+	}
+
 	ob_start();
 
 	$slug = hrswp\plugin_meta( 'slug' );
@@ -83,6 +97,69 @@ function settings_page_content() {
 
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo "<div class=\"wrap\">${output}</div>";
+}
+
+/**
+ * Displays a notice if no plugins are being managed.
+ *
+ * @since 0.3.0
+ */
+function unmanaged_plugins_nag() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// If there are managed plugins, don't bother.
+	if ( ! empty( get_option( hrswp\plugin_meta( 'option_plugins' ) ) ) ) {
+		return;
+	};
+
+	// Check the plugin status option for unmanaged plugins nag ignore.
+	if ( 'show' !== options\get_plugin_option( 'unmanaged_plugins_nag' ) ) {
+		return;
+	};
+
+	// Display the notice if no plugins are being managed.
+	printf(
+		'<div class="hrswp-gu notice notice-warning"><p>%1$s</p><p>%2$s | %3$s</p></div>',
+		'<strong>' . esc_html__( 'Notice: ', 'hrswp-github-updater' ) . '</strong>' . esc_html__( 'The GitHub Updater plugin is not currently watching any plugins for updates. Do you want to select the plugins you want to manage?', 'hrswp-github-updater' ),
+		'<a href="' . esc_url( get_admin_url( get_current_blog_id(), 'options-general.php?page=hrswp-github-updater' ) ) . '">' . esc_html__( 'Yes, update settings', 'hrswp-github-updater' ) . '</a>',
+		'<a href="' . esc_url(
+			add_query_arg(
+				array(
+					'hrswp_gu_unmanaged_plugins_nag' => 0,
+					'_wpnonce'                       => wp_create_nonce( 'hrswp_gu_unmanaged_plugins_nag_nonce' ),
+				)
+			)
+		) . '">' . esc_html__( 'No thanks, do not remind me again', 'hrswp-github-updater' ) . '</a>'
+	);
+}
+
+/**
+ * Manages display of the unmanaged GitHub plugins notice.
+ *
+ * @since 0.3.0
+ */
+function unmanaged_plugins_nag_handler() {
+	// Early exit.
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	if ( isset( $_GET['hrswp_gu_unmanaged_plugins_nag'] ) && (string) '0' === $_GET['hrswp_gu_unmanaged_plugins_nag'] ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpnonce'] ), 'hrswp_gu_unmanaged_plugins_nag_nonce' ) ) {
+			wp_die( esc_html__( 'The link has expired.', 'hrswp-github-updater' ) );
+		}
+
+		// Update the plugin option.
+		options\update_plugin_option( array( 'unmanaged_plugins_nag' => 'hide' ) );
+
+		// Remove the URL query strings.
+		if ( wp_safe_redirect( esc_url( remove_query_arg( array( 'hrswp_gu_unmanaged_plugins_nag', '_wpnonce' ) ) ) ) ) {
+			exit;
+		}
+	}
 }
 
 /**
@@ -129,4 +206,6 @@ function register_settings_page() {
 }
 
 add_action( 'admin_init', __NAMESPACE__ . '\register_settings' );
+add_action( 'admin_init', __NAMESPACE__ . '\unmanaged_plugins_nag_handler' );
 add_action( 'admin_menu', __NAMESPACE__ . '\register_settings_page' );
+add_action( 'admin_notices', __NAMESPACE__ . '\unmanaged_plugins_nag' );

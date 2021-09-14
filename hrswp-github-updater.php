@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: HRSWP GitHub Updater
- * Version: 0.2.0
+ * Version: 0.3.0
  * Description: A WSU HRS WordPress plugin to manage updates for GitHub-hosted plugins and themes.
  * Author: Adam Turner, washingtonstateuniversity
  * Author URI: https://hrs.wsu.edu/
@@ -9,7 +9,7 @@
  * Update URI: https://api.github.com/repos/washingtonstateuniversity/hrswp-github-updater/releases/latest
  * Text Domain: hrswp-github-updater
  * Requires at least: 5.8
- * Tested up to: 5.8.0
+ * Tested up to: 5.8.1
  * Requires PHP: 7.3
  *
  * @package HRSWP_GitHub_Updater
@@ -106,7 +106,11 @@ function activate() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
-	options\update_plugin_option( array( 'status' => 'active' ) );
+	if ( false === get_option( plugin_meta( 'option_status' ) ) ) {
+		options\set_default_options();
+	} else {
+		options\update_plugin_option( array( 'status' => 'active' ) );
+	}
 }
 
 /**
@@ -123,6 +127,7 @@ function deactivate() {
 	}
 
 	options\update_plugin_option( array( 'status' => 'inactive' ) );
+	delete_transient( plugin_meta( 'transient_base' ) . '_timeout' );
 }
 
 /**
@@ -131,6 +136,8 @@ function deactivate() {
  * @since 0.1.0
  */
 function uninstall() {
+	global $new_allowed_options, $wp_registered_settings;
+
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
@@ -138,13 +145,15 @@ function uninstall() {
 		require dirname( __FILE__ ) . '/lib/options.php';
 	}
 
-	// Unregister plugin settings.
-	unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
-
-	// Remove plugin options.
-	options\delete_plugin_option();
-	delete_option( plugin_meta( 'option_plugins' ) );
-
 	// Remove plugin transients.
 	options\flush_transients();
+
+	// Unregister plugin settings if they exist.
+	if ( isset( $new_allowed_options[ plugin_meta( 'slug' ) ] ) && isset( $wp_registered_settings[ plugin_meta( 'option_plugins' ) ] ) ) {
+		unregister_setting( plugin_meta( 'slug' ), plugin_meta( 'option_plugins' ) );
+	}
+
+	// Remove plugin options.
+	delete_option( plugin_meta( 'option_status' ) );
+	delete_option( plugin_meta( 'option_plugins' ) );
 }
