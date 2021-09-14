@@ -17,7 +17,7 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 ### Security (in case of vulnerabilities.)
 -->
 
-## 0.3.0-rc.1 (:construction: TBD)
+## 0.3.0 (2021-09-14)
 
 ### Added
 
@@ -27,6 +27,7 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ### Changed
 
+- Bump WP tested-to to 5.8.1.
 - Add option key to the main plugin option to track the unmanaged plugins nag, and fix default options. (6f1e249)
 - Add plugin file value to the `github_plugins` array. (ff9ab9b)
 
