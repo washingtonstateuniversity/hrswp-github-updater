@@ -9,6 +9,7 @@
 namespace HRS\HrswpGitHubUpdater\lib\api;
 
 use HRS\HrswpGitHubUpdater as hrswp;
+use HRS\HrswpGitHubUpdater\admin\siteHealth;
 use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -141,3 +142,26 @@ function upgrading_plugin_dirname( $upgrader ) {
 
 	return false;
 }
+
+/**
+ * Registers the rest route for running Site Health tests.
+ *
+ * @since 0.4.0
+ */
+function register_rest_routes() {
+	register_rest_route(
+		hrswp\plugin_meta( 'slug' ) . '/v1',
+		'/test/github-uri-communication',
+		array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => 'HRS\HrswpGitHubUpdater\admin\siteHealth\get_test_hrswpgu_github_uri',
+				'permission_callback' => function() {
+					return current_user_can( 'view_site_health_checks' );
+				},
+			),
+		)
+	);
+}
+
+add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_routes' );
