@@ -93,19 +93,31 @@ function get_repository_details( $request_uri = '', $slug = '' ) {
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( '' === $response_code || ! in_array( (int) $response_code, array( 200, 302, 304 ), true ) ) {
-			$error = sprintf(
-				/* translators: the API request URL */
-				__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
-				esc_url_raw( $request_uri )
+			$error = ( is_wp_error( $response ) )
+				? $response->get_error_message()
+				: sprintf(
+					/* translators: the API request URL */
+					__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
+					esc_url_raw( $request_uri )
+				);
+
+			$response = array(
+				'error_message' => $error,
+				'error_code'    => $response_code,
 			);
 
 			// Save results of an error to a 1-hour transient to prevent overloading the GitHub API.
-			set_transient( $transient, 'request-error-wait', HOUR_IN_SECONDS );
+			set_transient( $transient, $response, HOUR_IN_SECONDS );
 
 			return new \WP_Error( 'invalid-response', $error );
 		}
 
+		$etag = isset( $response['headers']['etag'] ) ? $response['headers']['etag'] : '';
+
 		$response = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		// Push the Etag to the response array.
+		$response['etag'] = $etag;
 
 		// Save results of a successful API call to a 10-hour transient.
 		set_transient( $transient, $response, 10 * HOUR_IN_SECONDS );
