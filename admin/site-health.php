@@ -80,7 +80,7 @@ function get_test_hrswpgu_github_uri() {
 
 		if ( ! in_array( $code, array( 200, 302, 304 ), true ) ) {
 			$error         = true;
-			$error_message = ( ! isset( $error_message ) ) ? $response->get_error_message : $error_message;
+			$error_message = ( ! isset( $error_message ) ) ? $response->get_error_message() : $error_message;
 
 			$result['description'] .= sprintf(
 				'<p>%s</p>',
