@@ -10,6 +10,7 @@ namespace HRS\HrswpGitHubUpdater\admin\SiteHealth;
 
 use HRS\HrswpGitHubUpdater as hrswp;
 use HRS\HrswpGitHubUpdater\lib\api;
+use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Silence is golden.' );
@@ -84,7 +85,7 @@ function get_test_hrswpgu_github_uri() {
 			$result['description'] .= sprintf(
 				'<p>%s</p>',
 				sprintf(
-					'<span class="dashicons error"><span class="screen-reader-text">%s</span></span> %s<br />%s',
+					'<span class="dashicons error"><span class="screen-reader-text">%s</span></span> %s<span class="hrswp-gu-error-details">%s</span>',
 					__( 'Error', 'hrswp-github-updater' ),
 					sprintf(
 						/* translators: 1: The plugin name. 2: The error code. */
@@ -180,5 +181,23 @@ function site_health_debug_info( $info ) {
 	return $info;
 }
 
+/**
+ * Enqueues custom CSS on the site health screen.
+ *
+ * @since 0.4.0
+ */
+function site_health_enqueue_scripts( $hook_suffix ) {
+    if ( 'site-health.php' !== $hook_suffix ) {
+        return;
+    }
+    wp_enqueue_style(
+			hrswp\plugin_meta( 'slug' ) . '-site-health',
+			plugins_url( 'css/site-health.min.css', hrswp\plugin_meta( 'path' ) ),
+			array(),
+			options\get_plugin_option( 'version' )
+		);
+}
+
 add_filter( 'site_status_tests', __NAMESPACE__ . '\site_status_tests', 10, 1 );
 add_filter( 'debug_information', __NAMESPACE__ . '\site_health_debug_info', 10, 1 );
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\site_health_enqueue_scripts' );
