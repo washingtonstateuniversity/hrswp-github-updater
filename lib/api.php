@@ -38,11 +38,7 @@ function get_github_plugins() {
 	// Save each plugin with a GitHub hostname.
 	$github_plugins = array();
 	foreach ( $plugins as $plugin_file => $plugin_data ) {
-		if ( ! $plugin_data['UpdateURI'] ) {
-			continue;
-		}
-
-		if ( 'api.github.com' !== wp_parse_url( $plugin_data['UpdateURI'], PHP_URL_HOST ) ) {
+		if ( true !== validate_github_uri( $plugin_data['UpdateURI'] ) ) {
 			continue;
 		}
 
@@ -174,6 +170,36 @@ function register_rest_routes() {
 			),
 		)
 	);
+}
+
+/**
+ * Validates GitHub update URIs.
+ *
+ * @since 0.4.0
+ *
+ * @param string $uri A URI to check.
+ * @return bool True if the URI is valid, false if invalid.
+ */
+function validate_github_uri( $uri = '' ) {
+	if ( '' === $uri ) {
+		return false;
+	}
+
+	$parsed_uri = wp_parse_url( $uri );
+
+	if ( 'api.github.com' !== $parsed_uri['host'] ) {
+		return false;
+	}
+
+	if ( 'https' !== $parsed_uri['scheme'] ) {
+		return false;
+	}
+
+	if ( '/repos' !== dirname( $parsed_uri['path'], 4 ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_routes' );
