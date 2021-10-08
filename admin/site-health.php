@@ -185,17 +185,19 @@ function site_health_debug_info( $info ) {
  * Enqueues custom CSS on the site health screen.
  *
  * @since 0.4.0
+ *
+ * @param string $hook_suffix The hook suffix for the current page.
  */
 function site_health_enqueue_scripts( $hook_suffix ) {
-    if ( 'site-health.php' !== $hook_suffix ) {
-        return;
-    }
-    wp_enqueue_style(
-			hrswp\plugin_meta( 'slug' ) . '-site-health',
-			plugins_url( 'css/site-health.min.css', hrswp\plugin_meta( 'path' ) ),
-			array(),
-			options\get_plugin_option( 'version' )
-		);
+	if ( 'site-health.php' !== $hook_suffix ) {
+		return;
+	}
+	wp_enqueue_style(
+		hrswp\plugin_meta( 'slug' ) . '-site-health',
+		plugins_url( 'css/site-health.min.css', hrswp\plugin_meta( 'path' ) ),
+		array(),
+		options\get_plugin_option( 'version' )
+	);
 }
 
 add_filter( 'site_status_tests', __NAMESPACE__ . '\site_status_tests', 10, 1 );
