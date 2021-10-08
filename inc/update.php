@@ -40,7 +40,7 @@ function version_check( $update, $plugin_data, $plugin_file ) {
 
 	$repository_details = api\get_repository_details( $plugin_data['UpdateURI'], $slug );
 
-	if ( ! is_wp_error( $repository_details ) && is_array( $repository_details ) ) {
+	if ( ! is_wp_error( $repository_details ) && isset( $repository_details['zipball_url'] ) ) {
 		$update               = (object) $update;
 		$update->slug         = $slug;
 		$update->version      = str_replace( 'v', '', $repository_details['tag_name'] );

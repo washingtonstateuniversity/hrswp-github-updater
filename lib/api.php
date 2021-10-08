@@ -9,6 +9,7 @@
 namespace HRS\HrswpGitHubUpdater\lib\api;
 
 use HRS\HrswpGitHubUpdater as hrswp;
+use HRS\HrswpGitHubUpdater\admin\siteHealth;
 use HRS\HrswpGitHubUpdater\lib\options;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,11 +38,7 @@ function get_github_plugins() {
 	// Save each plugin with a GitHub hostname.
 	$github_plugins = array();
 	foreach ( $plugins as $plugin_file => $plugin_data ) {
-		if ( ! $plugin_data['UpdateURI'] ) {
-			continue;
-		}
-
-		if ( 'api.github.com' !== wp_parse_url( $plugin_data['UpdateURI'], PHP_URL_HOST ) ) {
+		if ( true !== validate_github_uri( $plugin_data['UpdateURI'] ) ) {
 			continue;
 		}
 
@@ -92,19 +89,31 @@ function get_repository_details( $request_uri = '', $slug = '' ) {
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( '' === $response_code || ! in_array( (int) $response_code, array( 200, 302, 304 ), true ) ) {
-			$error = sprintf(
-				/* translators: the API request URL */
-				__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
-				esc_url_raw( $request_uri )
+			$error = ( is_wp_error( $response ) )
+				? $response->get_error_message()
+				: sprintf(
+					/* translators: the API request URL */
+					__( 'GitHub API request failed. The request for %s returned an invalid response.', 'hrswp-github-updater' ),
+					esc_url_raw( $request_uri )
+				);
+
+			$response = array(
+				'error_message' => $error,
+				'error_code'    => $response_code,
 			);
 
 			// Save results of an error to a 1-hour transient to prevent overloading the GitHub API.
-			set_transient( $transient, 'request-error-wait', HOUR_IN_SECONDS );
+			set_transient( $transient, $response, HOUR_IN_SECONDS );
 
 			return new \WP_Error( 'invalid-response', $error );
 		}
 
+		$etag = isset( $response['headers']['etag'] ) ? $response['headers']['etag'] : '';
+
 		$response = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		// Push the Etag to the response array.
+		$response['etag'] = $etag;
 
 		// Save results of a successful API call to a 10-hour transient.
 		set_transient( $transient, $response, 10 * HOUR_IN_SECONDS );
@@ -141,3 +150,56 @@ function upgrading_plugin_dirname( $upgrader ) {
 
 	return false;
 }
+
+/**
+ * Registers the rest route for running Site Health tests.
+ *
+ * @since 0.4.0
+ */
+function register_rest_routes() {
+	register_rest_route(
+		hrswp\plugin_meta( 'slug' ) . '/v1',
+		'/test/github-uri-communication',
+		array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => 'HRS\HrswpGitHubUpdater\admin\siteHealth\get_test_hrswpgu_github_uri',
+				'permission_callback' => function() {
+					return current_user_can( 'view_site_health_checks' );
+				},
+			),
+		)
+	);
+}
+
+/**
+ * Validates GitHub update URIs.
+ *
+ * @since 0.4.0
+ *
+ * @param string $uri A URI to check.
+ * @return bool True if the URI is valid, false if invalid.
+ */
+function validate_github_uri( $uri = '' ) {
+	if ( '' === $uri ) {
+		return false;
+	}
+
+	$parsed_uri = wp_parse_url( $uri );
+
+	if ( 'api.github.com' !== $parsed_uri['host'] ) {
+		return false;
+	}
+
+	if ( 'https' !== $parsed_uri['scheme'] ) {
+		return false;
+	}
+
+	if ( '/repos' !== dirname( $parsed_uri['path'], 4 ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+add_action( 'rest_api_init', __NAMESPACE__ . '\register_rest_routes' );

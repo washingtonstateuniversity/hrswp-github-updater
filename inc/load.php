@@ -28,3 +28,4 @@ require_once __DIR__ . '/update.php';
  */
 require_once dirname( __DIR__ ) . '/admin/plugins.php';
 require_once dirname( __DIR__ ) . '/admin/settings.php';
+require_once dirname( __DIR__ ) . '/admin/site-health.php';

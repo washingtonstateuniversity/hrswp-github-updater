@@ -112,7 +112,7 @@ function get_plugin_details( $result, $action, $args ) {
 
 	$plugin_details = api\get_repository_details( $update_uri, $args->slug );
 
-	if ( ! is_wp_error( $plugin_details ) && is_array( $plugin_details ) ) {
+	if ( ! is_wp_error( $plugin_details ) && isset( $repository_details['zipball_url'] ) ) {
 		$changelog = sprintf(
 			/* translators: 1: the plugin version number, 2: the HTML formatted release message from GitHub */
 			__( '<strong>Version %1$s Changes</strong>%2$s', 'hrswp-github-updater' ),
