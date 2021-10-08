@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: HRSWP GitHub Updater
- * Version: 0.3.0
+ * Version: 1.0.0-rc.1
  * Description: A WSU HRS WordPress plugin to manage updates for GitHub-hosted plugins and themes.
  * Author: Adam Turner, washingtonstateuniversity
  * Author URI: https://hrs.wsu.edu/

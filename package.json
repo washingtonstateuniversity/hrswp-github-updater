@@ -1,6 +1,6 @@
 {
 	"name": "@washingtonstateuniversity/hrswp-github-updater",
-	"version": "0.3.0",
+	"version": "1.0.0-rc.1",
 	"description": "A WSU HRS WordPress plugin to manage updates for GitHub-hosted plugins and themes.",
 	"author": "Adam Turner",
 	"contributors": [

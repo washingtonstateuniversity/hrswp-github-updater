@@ -63,7 +63,7 @@ function settings_field_github_plugins() {
 /**
  * Sanitizes the plugin settings option.
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @param array $option The plugin settings option to sanitize.
  * @return array The sanitized plugin settings option.
