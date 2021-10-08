@@ -19,6 +19,27 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## 1.0.0-rc.1 (:construction: TBD)
 
+### Added
+
+- Sanitize plugin settings option, close #13. (79e5fb8)
+- Extend GitHub URI validation, close #16. (ba76dd1)
+- Create site health tests for the GitHub update APIs, close #6. (ba76dd1)
+- Add WP rest API route for running site health tests. (ba76dd1)
+
+### Changed
+
+- Update API check to use the updated error response format. (ba76dd1)
+-  Modify the data stored in each repo tranient to store the etag value for later API checks and use a more useful error response. (ba76dd1)
+
+### Fixed
+
+- Fix typo in class method call `get_error_message`. (ba76dd1)
+
+### Security
+
+- Update roave/security-advisories. (0901021)
+- Bump npm-package-json-lint from 5.2.3 to 5.2.4. (e8f113c)
+
 ## 0.3.0 (2021-09-14)
 
 ### Added
