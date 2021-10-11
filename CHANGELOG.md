@@ -28,8 +28,10 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ### Changed
 
+- Update README with description and instructions.
 - Update API check to use the updated error response format. (ba76dd1)
--  Modify the data stored in each repo tranient to store the etag value for later API checks and use a more useful error response. (ba76dd1)
+- Modify the data stored in each repo tranient to store the etag value for later API checks and use a more useful error response. (ba76dd1)
+- Upgrade npm-package-json-lint from 5.2.4 to 5.4.0. (85dc876)
 
 ### Fixed
 
