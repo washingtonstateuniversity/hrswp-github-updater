@@ -68,7 +68,7 @@ function get_github_plugins() {
  *
  * @link https://developer.github.com/v3/
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @param string $request_uri Required. The full URI of the GitHub repository to fetch.
  * @param string $slug        Required. The slug name of the plugin to check.
@@ -154,7 +154,7 @@ function upgrading_plugin_dirname( $upgrader ) {
 /**
  * Registers the rest route for running Site Health tests.
  *
- * @since 0.4.0
+ * @since 1.0.0
  */
 function register_rest_routes() {
 	register_rest_route(
@@ -175,7 +175,7 @@ function register_rest_routes() {
 /**
  * Validates GitHub update URIs.
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @param string $uri A URI to check.
  * @return bool True if the URI is valid, false if invalid.

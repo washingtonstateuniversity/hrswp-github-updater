@@ -3,7 +3,7 @@
  * Manages tests shown on the site health screen.
  *
  * @package HRSWP_GitHub_Updater
- * @since 0.4.0
+ * @since 1.0.0
  */
 
 namespace HRS\HrswpGitHubUpdater\admin\SiteHealth;
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Tests if the site can communicate with the provided GitHub update URIs.
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @return array The test results.
  */
@@ -131,7 +131,7 @@ function get_test_hrswpgu_github_uri() {
 /**
  * Adds the GitHub URI tests to the WordPress site status tests.
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @param array[] $tests An associative array of direct and asynchronous tests.
  * @return array[] The modified associative array of direct and asynchronous tests.
@@ -150,7 +150,7 @@ function site_status_tests( $tests ) {
 /**
  * Adds the HRSWP GitHub Updater debug info to the site health screen.
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @param array $info The debug information to be added to the core information page.
  * @return array The modified debug information to display on the core information page.
@@ -184,7 +184,7 @@ function site_health_debug_info( $info ) {
 /**
  * Enqueues custom CSS on the site health screen.
  *
- * @since 0.4.0
+ * @since 1.0.0
  *
  * @param string $hook_suffix The hook suffix for the current page.
  */
