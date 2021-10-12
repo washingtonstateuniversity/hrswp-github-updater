@@ -61,6 +61,28 @@ function settings_field_github_plugins() {
 }
 
 /**
+ * Sanitizes the plugin settings option.
+ *
+ * @since 1.0.0
+ *
+ * @param array $option The plugin settings option to sanitize.
+ * @return array The sanitized plugin settings option.
+ */
+function sanitize_setting( $option ) {
+	if ( ! is_array( $option ) ) {
+		$option = array();
+	}
+
+	foreach ( $option as $slug => $opt ) {
+		if ( '1' !== (string) $opt ) {
+			$option[ $slug ] = '1';
+		}
+	}
+
+	return $option;
+}
+
+/**
  * Displays the GitHub Updater settings page for managing options.
  *
  * @since 0.2.0
@@ -172,7 +194,13 @@ function register_settings() {
 	$option = hrswp\plugin_meta( 'option_plugins' );
 
 	// Register setting to store which GitHub plugins to manage.
-	register_setting( $slug, $option );
+	register_setting(
+		$slug,
+		$option,
+		array(
+			'sanitize_callback' => __NAMESPACE__ . '\sanitize_setting',
+		)
+	);
 
 	add_settings_section(
 		$slug . '_section_github_plugins',
