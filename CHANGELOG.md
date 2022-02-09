@@ -19,6 +19,13 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## 1.0.1-rc.1 (:construction: TBD)
 
+### Security
+
+- Upgrade roave/security-advisories dev-master 0488e16 to 2ec9ad6. (27e6657)
+- Bump squizlabs/php_codesniffer from 3.6.0 to 3.6.2. (3c66817)
+- Bump dealerdirect/phpcodesniffer-composer-installer from 0.7.1 to 0.7.2. (1380b49)
+- Bump npm-package-json-lint from 5.4.0 to 5.4.2. (fbc6de3)
+
 ## 1.0.0 (2021-10-12)
 
 ### Added
