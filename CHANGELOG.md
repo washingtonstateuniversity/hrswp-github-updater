@@ -19,6 +19,11 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## 1.1.0-rc.1 (:construction: TBD)
 
+### Changed
+
+- 
+- Upgrade npm-package-json-lint from 6.0.3 to 6.3.0. (ce2fdca)
+
 ## 1.0.2 (2022-03-15)
 
 ### Changed
