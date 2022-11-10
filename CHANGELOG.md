@@ -19,6 +19,8 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## v1.1.1 (2022-11-10)
 
+### Changed
+
 - Bump WP tested-to to 6.1.1.
 
 ## 1.1.0 (2022-06-03)
