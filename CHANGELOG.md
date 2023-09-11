@@ -17,6 +17,12 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 ### Security (in case of vulnerabilities.)
 -->
 
+## v1.1.4 (2023-09-11)
+
+### Fixed
+
+- Version number issue.
+
 ## v1.1.3 (2023-09-08)
 
 ### Changed
