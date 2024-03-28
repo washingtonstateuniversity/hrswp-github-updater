@@ -19,6 +19,13 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## 1.2.0-rc.1 (:construction: TBD)
 
+## Changed
+
+- Upgrade Node.js to v20 and track version at project level. (89df427)
+- Update composer packages and config. (922480a)
+- Upgrade npm-package-json-lint from 6.0.3 to 7.1.0. (3609200)
+- Update @wordpress/npm-package-json-lint-config from 4.1.2 to 4.39.0. (9e27fb6)
+
 ## 1.1.5 (2023-12-08)
 
 ### Changed
