@@ -23,6 +23,10 @@
 	"bugs": {
 		"url": "https://github.com/washingtonstateuniversity/hrswp-github-updater/issues"
 	},
+	"engines": {
+		"node": ">=20.10.0",
+		"npm": ">=10.2.3"
+	},
 	"browserslist": [
 		"> 1%",
 		"ie 8-11",
