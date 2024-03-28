@@ -134,12 +134,12 @@ function unmanaged_plugins_nag() {
 	// If there are managed plugins, don't bother.
 	if ( ! empty( get_option( hrswp\plugin_meta( 'option_plugins' ) ) ) ) {
 		return;
-	};
+	}
 
 	// Check the plugin status option for unmanaged plugins nag ignore.
 	if ( 'show' !== options\get_plugin_option( 'unmanaged_plugins_nag' ) ) {
 		return;
-	};
+	}
 
 	// Display the notice if no plugins are being managed.
 	printf(

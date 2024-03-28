@@ -164,7 +164,7 @@ function register_rest_routes() {
 			array(
 				'methods'             => 'GET',
 				'callback'            => 'HRS\HrswpGitHubUpdater\admin\siteHealth\get_test_hrswpgu_github_uri',
-				'permission_callback' => function() {
+				'permission_callback' => function () {
 					return current_user_can( 'view_site_health_checks' );
 				},
 			),
