@@ -19,7 +19,7 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ## 1.2.0-rc.1 (:construction: TBD)
 
-## Changed
+### Changed
 
 - Upgrade Node.js to v20 and track version at project level. (89df427)
 - Update composer packages and config. (922480a)
