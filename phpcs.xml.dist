@@ -2,24 +2,30 @@
 <ruleset name="WordPress Coding Standards">
 	<description>Sniffs for WordPress plugins.</description>
 
-	<rule ref="PHPCompatibility"/>
-	<config name="testVersion" value="7.3-"/>
+	<!-- Ignore WP Scripts-generated asset files. -->
+	<exclude-pattern>*/build/*asset.php*</exclude-pattern>
 
-	<rule ref="WordPress-Core"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="WordPress.WP.I18n"/>
-	<config name="text_domain" value="hrswp-github-updater,default"/>
+	<!-- Ignore third-party code. -->
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 
-	<rule ref="WordPress">
+	<!-- Ignore filenames -->
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+
+	<!-- Loads the PHP Compatibility ruleset. -->
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Loads the WP rulesets -->
+	<rule ref="WordPress"/>
+
+	<!-- <rule ref="WordPress">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
-	</rule>
+	</rule> -->
 
-	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis">
-		<properties>
-			<property name="allowUnusedParametersBeforeUsed" value="true"/>
-		</properties>
-	</rule>
-	<rule ref="WordPress.CodeAnalysis.EmptyStatement"/>
+	<!-- Loads the variable analysis ruleset. -->
+	<rule ref="VariableAnalysis"/>
 
 	<rule ref="PEAR.Functions.FunctionCallSignature">
 		<properties>
@@ -32,13 +38,12 @@
 	<arg name="basepath" value="./"/>
 	<arg name="parallel" value="20"/>
 
-	<file>.</file>
+	<!-- Sets the minimum supported PHP version to 7.4, which is also WordPress's. -->
+	<config name="testVersion" value="7.4-"/>
 
-	<!-- Exclude generated files. -->
-	<exclude-pattern type="relative">^build/*</exclude-pattern>
+	<!-- Sets the minimum supported WP version to 5.4. -->
+	<config name="minimum_wp_version" value="5.4" />
 
-	<!-- Directories and third party library exclusions -->
-	<exclude-pattern>/node_modules/*</exclude-pattern>
-	<exclude-pattern>/vendor/*</exclude-pattern>
-
+	<!-- Defines the valid textdomain options. -->
+	<config name="text_domain" value="hrswp-github-updater,default"/>
 </ruleset>
