@@ -21,6 +21,7 @@ Changelog formatting (https://keepachangelog.com/en/1.0.0/):
 
 ### Changed
 
+- Bump WP tested-to to 6.5.0 to close #27.
 - Upgrade Node.js to v20 and track version at project level. (89df427)
 - Update composer packages and config. (922480a)
 - Upgrade npm-package-json-lint from 6.0.3 to 7.1.0. (3609200)
