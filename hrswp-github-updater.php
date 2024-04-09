@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: HRSWP GitHub Updater
- * Version: 1.1.5
+ * Version: 1.2.0
  * Description: A WSU HRS WordPress plugin to manage updates for GitHub-hosted plugins and themes.
  * Author: Adam Turner, washingtonstateuniversity
  * Author URI: https://hrs.wsu.edu/
@@ -9,7 +9,7 @@
  * Update URI: https://api.github.com/repos/washingtonstateuniversity/hrswp-github-updater/releases/latest
  * Text Domain: hrswp-github-updater
  * Requires at least: 5.8
- * Tested up to: 6.4.2
+ * Tested up to: 6.5.0
  * Requires PHP: 7.3
  *
  * @package HRSWP_GitHub_Updater
@@ -66,7 +66,7 @@ function pre_init() {
 	}
 
 	/* Load required plugin files. */
-	require dirname( __FILE__ ) . '/inc/load.php';
+	require __DIR__ . '/inc/load.php';
 }
 
 /**
@@ -103,7 +103,7 @@ function activate() {
 		return;
 	}
 	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
-		require dirname( __FILE__ ) . '/lib/options.php';
+		require __DIR__ . '/lib/options.php';
 	}
 
 	if ( false === get_option( plugin_meta( 'option_status' ) ) ) {
@@ -123,7 +123,7 @@ function deactivate() {
 		return;
 	}
 	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
-		require dirname( __FILE__ ) . '/lib/options.php';
+		require __DIR__ . '/lib/options.php';
 	}
 
 	options\update_plugin_option( array( 'status' => 'inactive' ) );
@@ -142,7 +142,7 @@ function uninstall() {
 		return;
 	}
 	if ( ! function_exists( __NAMESPACE__ . '\lib\options\update_plugin_option' ) ) {
-		require dirname( __FILE__ ) . '/lib/options.php';
+		require __DIR__ . '/lib/options.php';
 	}
 
 	// Remove plugin transients.
