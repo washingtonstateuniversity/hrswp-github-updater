@@ -4,6 +4,9 @@
 
 ## Overview
 
+> [!CAUTION]
+> As of 26 July 2024, this project is archived and no longer being actively maintained.
+
 The HRSWP GitHub Updater plugin helps to manage updates for plugins in WordPress that provide a GitHub repository URL as their Update URI.
 
 ## Description
@@ -71,7 +74,7 @@ See the scripts section of `package.json` for additional available commands.
 
 ## Support Level
 
-**Active:** WSU HRS actively works on this plugin. We plan to continue work for the foreseeable future, adding new features, enhancing existing ones, and maintaining compatability with the latest version of WordPress. Bug reports, feature requests, questions, and pull requests are welcome.
+**Archived:** WSU HRS no longer maintains this plugin.
 
 ## Changelog
 
